@@ -128,6 +128,18 @@
 
 ;;; TODO PROOF
 
+;;; testing data
+;;; 5512500000 (5 2 8 2) 2 => 8
+;;;     360    (3 2 1) 1   => 2
+;;; 6251175 (0 4 2 3 1) 3  => 3
+(define (ref n k)
+  (define (iter n k i)
+    (let ((p (k-th_prime k)))
+      (cond ((= (remainder n p) 0) (iter (quotient n p) k (+ i 1)))
+            (else i))))
+  (iter n k 0))
+;;; TODO PROOF
+
 
 
 
