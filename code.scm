@@ -113,6 +113,25 @@
         (else (#f))))
 
 
+;;; head function
+
+;;; testing data
+;;; 5512500000 (5 2 8 2)=> 5
+;;;     360    (3 2 1)  => 3
+;;; 6251175 (0 4 2 3 1) => 0
+(define (head n)
+  (define (iter n i)
+    (cond ((= (remainder n 2) 0) (iter (quotient n 2) (+ i 1)))
+          (else i)))
+
+  (iter n 0))
+
+;;; TODO PROOF
+
+
+
+
+
   
 
 
