@@ -131,7 +131,7 @@
 ;;; testing data
 ;;; 5512500000 (5 2 8 2) 2 => 8
 ;;;     360    (3 2 1) 1   => 2
-;;; 7640325 (0 4 2 3 1) 3  => 3
+;;; 6251175 (0 4 2 3 1) 3  => 3
 (define (ref n k)
   (define (iter n k i)
     (let ((p (k-th_prime k)))
@@ -141,47 +141,7 @@
 ;;; TODO PROOF
 
 
-;;; testing data
-;;; 5512500000 (5 2 8 2) => 2
-;;;     360    (3 2 1)   => 1
-;;; 7640325 (0 4 2 3 1)  => 1
-(define (tail n)
-  (define (iter n curr i)
-    (let ((h (ref n i)) ;;; h for current head
-          (cp (k-th_prime i))) ;; cp for current prime
-      (cond ((= n 1) curr)
-            (else (iter (/ n (expt cp h)) h (+ i 1))))))
-  (iter n (head n) 0))
 
-;;; TODO PROOF
-
-
-;;; 5512500000 (5 2 8 2) 2 => 16950244380300
-;;; 360 (3 2 1) 3 => 37800 (3 3 2 1)
-;;; 7640325 (0 4 2 3 1) 8  => 135655520000 (8 0 4 2 3 1)
-(define (insert-at-head n p)
-  (define (iter n result i) ;;; the result is the constructed #
-    (let ((h (ref n i))
-          (p (k-th_prime i))
-          (np (k-th_prime (+ i 1)))) ;; next prime
-      (cond ((= n 1) result)
-            (else (iter (/ n (expt p h)) (* result (expt np h)) (+ i 1))))))
-  (iter n (expt 2 p) 0)) ;;; initial pass 2^p to result since 2 is the first prime
-
-
-
-;;; testing data
-;;; 5512500000 (5 2 8 2) => 4
-;;;     360    (3 2 1)   => 3
-;;; 7640325 (0 4 2 3 1)  => 5
-(define (len n)
-  (define (iter n i)
-    (let ((h (ref n i))
-          (p (k-th_prime i)))
-      (cond ((= n 1) i)
-            (else (iter (/ n (expt p h)) (+ i 1))))))
-  (iter n 0))
-;;; TODO PROOF
 
 
   
