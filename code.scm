@@ -256,33 +256,81 @@
 ;    (let ((l (len result))
 ;          (p (
 
+;;; given an index i, front-list returns the elements from index 0 to i (including element at i)
+;;; testing data
+;;; 5512500000 (5 2 8 2) index = 0 => 
+;;;     360    (3 2 1)   => 1
+;;; 7640325 (0 4 2 3 1)  => 1
 
-
-;; half done, will be finish very soon
-
-
-;;; min function to find min of list
-(define (myMin n)
-  (define (iter n currMin index)
-    (cond ((= n 1) index)
-          (else (let ((last_p (k-th_prime (- (len n) 1))) (last_elt (last n)))
-                  (let ((q (/ n (expt last_p last_elt))))
-                    (cond ((<= last_elt currMin) (iter q last_elt (- (len n) 1)))
-                          (else (iter q currMin index))))))))
-  (cond ((= (head n) 0) 0)
-        (else (iter n (last n) (- (len n) 1)))))
-          
-
-;;; sort function
-;;; does not function, logic needs to be reworked
-;(define (sort n)
-;  (define (iter n result i)
-;    (let ((m (myMin n)))
-;      (let ((p (k-th_prime m)) (elt (ref n m)))
-;        (cond ((= n 1) result)
-;              (else (iter (/ n (expt p elt)) (* result (expt (k-th_prime i) elt)) (+ i 1)))))))
-;  (iter n 1 0))
+;(define (front-list n index)
+;  (define (iter n index result counter)
+;    (let ((p (k-th_prime counter)) (elt (ref n counter)))
+;      (cond ((> counter index) result)
+;            (else (iter n index (* result (expt p elt)) (+ counter 1))))))
+;  (iter n index 1 0))
 ;
+;
+;;;; given an index i, back-list returns the elements from index i to (len n)-1 (including element at i)
+;(define (back-list n index)
+;  (define (iter n index result counter)
+;    (cond ((>= index (len n)) result)
+;          (else (iter n
+;                      (+ index 1)
+;                      (* result (expt (k-th_prime counter) (ref n index)))
+;                      (+ counter 1)))))
+;  (iter n index 1 0))
+;
+;
+;;;; merges any remaining elements in the orginial list to the new list
+;(define (mergeRemaining n rsf index k)
+;  (cond ((>= index len(n)) rsf)
+;        (else (mergeRemaining n
+;                              (* rsf (expt (k-th_prime k) (ref n index)))
+;                              (+ index 1)
+;                              (+ k 1))))) 
+;
+;
+;;;; merge function that takes two numbers representing sorted lists
+;;;; and returns a sorted list with the two lists merged together
+;(define (merge firstHalf secondHalf)
+;  (define (iter firstHalf secondHalf i j k result)
+;    (cond ((>= i (len firstHalf)) (mergeRemaining secondHalf result j k))
+;          ((>= j (len secondHalf)) (mergeRemaining firstHalf result i k)) 
+;          ((< (ref firstHalf i) (ref secondHalf j)) (iter firstHalf
+;                                                          secondHalf
+;                                                          (+ i 1)
+;                                                          j
+;                                                          (+ k 1)
+;                                                          (* result (expt (k-th_prime k) (ref firstHalf i)))))
+;          (else (iter firstHalf
+;                      secondHalf
+;                      i
+;                      (+ j 1)
+;                      (+ k 1)
+;                      (* result (expt (k-th_prime k) (ref secondHalf j)))))))
+;  (iter firstHalf secondHalf 0 0 0 1))
+;
+;
+;
+;
+;;;; merge sort
+;(define (mergeSort n)
+;  (cond ((> (len n) 1) ((let ((mid (/ (len n) 2)))
+;                                     (let ((firstHalf (mergeSort (front-list n mid)))
+;                                           (secondHalf (mergeSort (back-list n (+ mid 1)))))
+;                                       (merge firstHalf secondHalf)))))
+;        (else n)))
+
+
+;;; append function
+;;; testing data
+;;; 288 (5 2) and 18 (1 2) => 70560 (5 2 1 2)
+(define (myappend2 s t)
+  (define (iter s t)
+    (let ((ls (len s)) (first_elt (head t)) (rest (tail2 t)))
+      (cond ((= t 1) s)
+            (else (iter (* s (expt (k-th_prime ls) first_elt)) rest)))))
+  (iter s t))
 
 ;reverse function
 (define (myreverse n)
