@@ -153,6 +153,19 @@
             (else (iter (/ n (expt cp h)) h (+ i 1))))))
   (iter n (head n) 0))
 
+
+;;; modified tail function
+;;; testing data
+;;; 5512500000 (5 2 8 2) => 656100 (2 8 2)
+;;;     360    (3 2 1)   => 12 (2 1)
+;;; 7640325 (0 4 2 3 1)  => 126000 (4 2 3 1)
+(define (tail2 n)
+  (define (iter n result i)
+    (let ((h (ref n i)) (cp (k-th_prime i)) (prev_p (k-th_prime (- i 1))))
+      (cond ((= n 1) result)
+            (else (iter (/ n (expt cp h)) (* result (expt prev_p h)) (+ i 1))))))
+  (iter (/ n (expt 2 (head n))) 1 1))
+
 ;;; TODO PROOF
 
 
@@ -246,3 +259,50 @@
 
 
 ;; half done, will be finish very soon
+
+
+;;; min function to find min of list
+(define (myMin n)
+  (define (iter n currMin index)
+    (cond ((= n 1) index)
+          (else (let ((last_p (k-th_prime (- (len n) 1))) (last_elt (last n)))
+                  (let ((q (/ n (expt last_p last_elt))))
+                    (cond ((<= last_elt currMin) (iter q last_elt (- (len n) 1)))
+                          (else (iter q currMin index))))))))
+  (cond ((= (head n) 0) 0)
+        (else (iter n (last n) (- (len n) 1)))))
+          
+
+;;; sort function
+;;; does not function, logic needs to be reworked
+;(define (sort n)
+;  (define (iter n result i)
+;    (let ((m (myMin n)))
+;      (let ((p (k-th_prime m)) (elt (ref n m)))
+;        (cond ((= n 1) result)
+;              (else (iter (/ n (expt p elt)) (* result (expt (k-th_prime i) elt)) (+ i 1)))))))
+;  (iter n 1 0))
+;
+
+;reverse function
+(define (myreverse n)
+  (let ((l (- (len n) 1)))
+    (define (iter n index result)
+      (cond ((< index 0) result)
+            (else (iter n
+                        (- index 1)
+                        (* result (expt (k-th_prime (- l index)) (ref n index)))))))
+    (iter n l 1)))
+
+;palin function
+(define (palin? n)
+  (define (iter n index result)
+    (let ((l (len n)))
+      (cond ((equal? result #f) result)
+            ((> index (/ l 2)) result)
+            ((= (ref n index) (ref n (- (- l 1) index))) (iter n (+ index 1) #t))
+            (else (iter n (+ index 1) #f)))))
+  (iter n 0 #t))
+    
+    
+          
