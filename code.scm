@@ -110,7 +110,7 @@
 ;;; then we only need to directly compare n with m, then it will return the same result of comparision of s and t.
 (define (myequal? n m)
   (cond ((= n m) #t)
-        (else (#f))))
+        (else #f)))
 
 
 ;;; head function
@@ -195,6 +195,7 @@
 
 
 ;;; ?????????????????????????????????????????????????????????????
+;;; I think the result should be the same as the tail function???
 ;;; whats the diff between last and tail?????????????????????????
 ;;; ?????????????????????????????????????????????????????????????
 
@@ -213,7 +214,35 @@
 ;;; TODO: PROOF
 
 
+;;; the general idea of insert is going to construct the output
+;;; the first part of the result would be # before position y
+;;; then we add our inserted value to the tail of our list
+;;; and last we continue our constructing
+
+;;; testing data
+;;; 5512500000 (5 2 8 2) 7 8 => 15694670722500000 (5 2 7 8 2)
+;;;     360    (3 2 1)   => 1
+;;; 7640325 (0 4 2 3 1)  => 1
+
+(define (insert-at n x y)
+  (define (iter n result i j x y) ;;; i is index of original list, j is index of constructed list
+    (let ((p (k-th_prime j))
+          (curr (ref n i))
+          (l (len n)))
+      (cond ((> j l) result)
+            ((= j y) (iter n (* result (expt p x)) i (+ j 1) x y))
+            (else (iter n (* result (expt p curr)) (+ i 1) (+ j 1) x y)))))
+  (iter n 1 0 0 x y))
 
 
 
-    
+;;; the idea would be go through the list t
+;;; and then one by one append the number value to the back of the list s
+;(define (my-append s t)
+;  (define (iter s t result i)
+;    (let ((l (len result))
+;          (p (
+
+
+
+;; half done, will be finish very soon
