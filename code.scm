@@ -355,4 +355,32 @@
         (cond ((= i l) n)
               (else (iter (sub-iter n i 0) (+ i 1))))))
   (iter n 0))
-    
+
+
+;;; SET FUNCTIONS
+;; element-of? function
+; testing data
+;; 112500000 (5 2 8) p=8 => #t
+;;     360    (3 2 1) p=11 => #f
+;; 126000 (4 2 3 1) p=1  => #t
+(define (element-of? n p)
+  (define (iter n p counter result)
+    (cond ((equal? result #t) result)
+          ((= counter (len n)) result)
+          ((= p (ref n counter)) (iter n p (+ counter 1) #t))
+          (else (iter n p (+ counter 1) #f))))
+  (iter n p 0 #f))
+
+;; subset-of? function
+;; check if m is a subset of n
+; testing data
+;; n=112500000 (5 2 8), m=26244 (2 8) => #t
+;;     360    (3 2 1), m=8 (3) => #t
+;; 126000 (4 2 3 1) m=1350000 (4 3 5)  => #f
+(define (subset-of? m n)
+  (let ((last_index (- (len m) 1)) (last_elt (last m)))
+    (cond ((= (len m) 1) (element-of? n last_elt))
+          ((and (element-of? n last_elt)
+                (subset-of? (/ m (expt (k-th_prime last_index) last_elt)) n))
+           #t)
+          (else #f))))
