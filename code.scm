@@ -256,81 +256,16 @@
 ;    (let ((l (len result))
 ;          (p (
 
-;;; given an index i, front-list returns the elements from index 0 to i (including element at i)
-;;; testing data
-;;; 5512500000 (5 2 8 2) index = 0 => 
-;;;     360    (3 2 1)   => 1
-;;; 7640325 (0 4 2 3 1)  => 1
 
-;(define (front-list n index)
-;  (define (iter n index result counter)
-;    (let ((p (k-th_prime counter)) (elt (ref n counter)))
-;      (cond ((> counter index) result)
-;            (else (iter n index (* result (expt p elt)) (+ counter 1))))))
-;  (iter n index 1 0))
-;
-;
-;;;; given an index i, back-list returns the elements from index i to (len n)-1 (including element at i)
-;(define (back-list n index)
-;  (define (iter n index result counter)
-;    (cond ((>= index (len n)) result)
-;          (else (iter n
-;                      (+ index 1)
-;                      (* result (expt (k-th_prime counter) (ref n index)))
-;                      (+ counter 1)))))
-;  (iter n index 1 0))
-;
-;
-;;;; merges any remaining elements in the orginial list to the new list
-;(define (mergeRemaining n rsf index k)
-;  (cond ((>= index len(n)) rsf)
-;        (else (mergeRemaining n
-;                              (* rsf (expt (k-th_prime k) (ref n index)))
-;                              (+ index 1)
-;                              (+ k 1))))) 
-;
-;
-;;;; merge function that takes two numbers representing sorted lists
-;;;; and returns a sorted list with the two lists merged together
-;(define (merge firstHalf secondHalf)
-;  (define (iter firstHalf secondHalf i j k result)
-;    (cond ((>= i (len firstHalf)) (mergeRemaining secondHalf result j k))
-;          ((>= j (len secondHalf)) (mergeRemaining firstHalf result i k)) 
-;          ((< (ref firstHalf i) (ref secondHalf j)) (iter firstHalf
-;                                                          secondHalf
-;                                                          (+ i 1)
-;                                                          j
-;                                                          (+ k 1)
-;                                                          (* result (expt (k-th_prime k) (ref firstHalf i)))))
-;          (else (iter firstHalf
-;                      secondHalf
-;                      i
-;                      (+ j 1)
-;                      (+ k 1)
-;                      (* result (expt (k-th_prime k) (ref secondHalf j)))))))
-;  (iter firstHalf secondHalf 0 0 0 1))
-;
-;
-;
-;
-;;;; merge sort
-;(define (mergeSort n)
-;  (cond ((> (len n) 1) ((let ((mid (/ (len n) 2)))
-;                                     (let ((firstHalf (mergeSort (front-list n mid)))
-;                                           (secondHalf (mergeSort (back-list n (+ mid 1)))))
-;                                       (merge firstHalf secondHalf)))))
-;        (else n)))
-
-
-;;; append function
+;; append function
 ;;; testing data
 ;;; 288 (5 2) and 18 (1 2) => 70560 (5 2 1 2)
-(define (myappend2 s t)
-  (define (iter s t)
-    (let ((ls (len s)) (first_elt (head t)) (rest (tail2 t)))
-      (cond ((= t 1) s)
-            (else (iter (* s (expt (k-th_prime ls) first_elt)) rest)))))
-  (iter s t))
+(define (myappend2 m n)
+  (define (iter m n)
+    (let ((ls (len m)) (first_elt (head n)) (rest (tail2 n)))
+      (cond ((= n 1) m)
+            (else (iter (* m (expt (k-th_prime ls) first_elt)) rest)))))
+  (iter m n))
 
 ;reverse function
 (define (myreverse n)
@@ -351,6 +286,73 @@
             ((= (ref n index) (ref n (- (- l 1) index))) (iter n (+ index 1) #t))
             (else (iter n (+ index 1) #f)))))
   (iter n 0 #t))
+
+
+;; HELPER FUNCTIONS FOR SORT
+;; given an index i, front-list returns the elements from index 0 to i (including element at i)
+;; testing data
+;; 5512500000 (5 2 8 2) index=0 => 32 (5)
+;;     360    (3 2 1)  index=1 => 72 (3 2)
+;; 126000 (4 2 3 1)  index=3 => 126000 (4 2 3 1)
+(define (front-list n index)
+  (define (iter n index result counter)
+    (let ((p (k-th_prime counter)) (elt (ref n counter)))
+      (cond ((> counter index) result)
+            (else (iter n index (* result (expt p elt)) (+ counter 1))))))
+  (iter n index 1 0))
+
+
+;;; returns the list of elements after the given index w/ their original prime configuration
+;;; that is this function does not create a new list
+;;; does not include the element at index
+;; testing data
+;; 5512500000 (5 2 8 2) index=0 => (3^2)*(5^8)*(7^2) = 172265625
+;;     360    (3 2 1)  index=1 => (5^1) = 5
+;; 126000 (4 2 3 1)  index=3 => 1 (there are no more elements after index 3)
+(define (back-half n index)
+  (let ((front (front-list n index)))
+    (/ n front)))
+
+;;; returns the list of elements between the given indices w/ their original prime configuration
+;;; that is this function does not create a new list
+;;; does not include the element at index i and index j
+(define (mid-half n i j)
+  (let ((d (* (front-list n i) (back-half n j) (expt (k-th_prime j) (ref n j)))))
+    (/ n d)))
+
+
+;;; swap function
+;;; precond: i < j and 0 <= i,j <= (len n)-1
+(define (no-gap-swap n i j)
+  (cond ((= i 0) (* (expt (k-th_prime i) (ref n j)) (expt (k-th_prime j) (ref n i)) (back-half n j)))
+        ((= j (- (len n) 1)) (* (front-list n (- i 1)) (expt (k-th_prime i) (ref n j)) (expt (k-th_prime j) (ref n i))))
+        (else (* (front-list n (- i 1)) (expt (k-th_prime i) (ref n j)) (expt (k-th_prime j) (ref n i)) (back-half n j)))))
+
+(define (gap-swap n i j)
+  (cond ((and (= i 0) (= j (- (len n) 1))) (* (expt (k-th_prime i) (ref n j)) (mid-half n i j) (expt (k-th_prime j) (ref n i))))
+        ((= i 0) (* (expt (k-th_prime i) (ref n j)) (mid-half n i j) (expt (k-th_prime j) (ref n i)) (back-half n j)))
+        ((= j (- (len n) 1)) (* (front-list n (- i 1)) (expt (k-th_prime i) (ref n j)) (mid-half n i j) (expt (k-th_prime j) (ref n i))))
+        (else (* (front-list n (- i 1)) (expt (k-th_prime i) (ref n j)) (mid-half n i j) (expt (k-th_prime j) (ref n i)) (back-half n j)))))
+
+(define (swap n i j)
+  (cond ((> (- j i) 1) (gap-swap n i j))
+        (else (no-gap-swap n i j))))
+
+;;; bubble sort
+;; testing data
+;; 5512500000 (5 2 8 2) => 648540112500 (2 2 5 8)
+;;     360    (3 2 1)   => 2250 (1 2 3)
+;; 126000 (4 2 3 1)  => 5402250 (1 2 3 4)
+(define (sub-iter n i j)
+  (let ((l (len n)))
+    (cond ((= j (- l i 1)) n)
+          ((> (ref n j) (ref n (+ j 1))) (sub-iter (swap n j (+ j 1)) i (+ j 1)))
+          (else (sub-iter n i (+ j 1))))))
+
+(define (sort n)
+  (define (iter n i)
+      (let ((l (len n)))
+        (cond ((= i l) n)
+              (else (iter (sub-iter n i 0) (+ i 1))))))
+  (iter n 0))
     
-    
-          
