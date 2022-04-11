@@ -260,7 +260,7 @@
 ;; append function
 ;;; testing data
 ;;; 288 (5 2) and 18 (1 2) => 70560 (5 2 1 2)
-(define (myappend2 m n)
+(define (myappend m n)
   (define (iter m n)
     (let ((ls (len m)) (first_elt (head n)) (rest (tail2 n)))
       (cond ((= n 1) m)
@@ -384,3 +384,40 @@
                 (subset-of? (/ m (expt (k-th_prime last_index) last_elt)) n))
            #t)
           (else #f))))
+
+
+;; union function
+;; approach: append each element in n to the back of  m
+;; before appending an element first check if it's already in n
+;; if so, do not append that element
+;; if not, do append that element
+; testing data
+;; m=112500000 (5 2 8), n=26244 (2 8) => 112500000 (5 2 8)
+;;     360    (3 2 1), n=8 (3) => 360 (3 2 1)
+;; 360    (3 2 1), n=5000 (3 4) =>   864360  (3 2 1 4)
+(define (union m n)
+  (define (iter m n rsf counter)
+    (let ((len_n (len n)) (counter_val_n (ref n counter)))
+      (cond ((= counter len_n) rsf)
+            ((element-of? m counter_val_n) (iter m n rsf (+ counter 1)))
+            (else (iter m n (myappend rsf (expt 2 counter_val_n)) (+ counter 1))))))
+  (iter m n m 0))
+
+
+;; intersection function
+;; approach: find the list with the smallest length
+;; iterate through all of the elements in that list to check if they are in the other list
+;; if the check passes, append each element
+; testing data
+;; m=112500000 (5 2 8), n=26244 (2 8) => 26244 (2 8)
+;;     360    (3 2 1), n=8 (3) => 8 (3)
+;; 360    (3 2 1), n=2592 (5 4) =>  1 (empty set)
+(define (intersection m n)
+  (define (iter maxList minList rsf counter)
+    (let ((len_minList (len minList)) (counter_val (ref minList counter)))
+      (cond ((= counter len_minList) rsf)
+            ((element-of? maxList counter_val) (iter maxList minList (myappend rsf (expt 2 counter_val)) (+ counter 1)))
+            (else (iter maxList minList rsf (+ counter 1))))))
+  (let ((min_len (min (len m) (len n))))
+    (cond ((= min_len (len m)) (iter n m 1 0))
+          (else (iter m n 1 0)))))
