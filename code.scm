@@ -192,8 +192,8 @@
 ;;; post-condition: returns the first element of the list
 
 ;;; Design Idea
-;;; Since the number n represent list s, which is constructed by 2^k0 + 3^k1 + 5^k2 + ...., then we only need to figure out what k0 is
-;;; and also the number n is constructed by the multiplication of prime number
+;;; Since the number n represent list s, which is constructed by 2^k0 + 3^k1 + 5^k2 + ...., then we only need to figure out what k0 is.
+;;; the number n is constructed by the multiplication of prime number
 ;;; we only need to figure out how many factor of 2 (which is the first prime number) that the number n has
 ;;; here we design a iterative process, which contains a counter i, keep counting how many 2s is divisible (without remainder) by the number n,
 ;;; and n keep reducing its value
@@ -236,17 +236,41 @@
 
 ;;; Design Idea
 ;;; design a iterative process
-;;; start with a counter i
+;;; start with a counter i, very similar to head function, but instead of we retreive 2, we retreive the k-th prime number
+;;; Since the number n represent list s, which is constructed by 2^j0 + 3^j1 + 5^j2 + ....some prime ^ jk
+;;; then we only need to figure out what jk is
+;;; the number n is constructed by the multiplication of prime number
+;;; we only need to figure out how many factor of k-th prime that the number n has
+;;; here we design a iterative process, which contains a counter i, keep counting how many k-th prime is divisible (without remainder) by the number n,
+;;; and n keep reducing its value
+;;; the program will terminate when the remainder of n/k-th prime is not 0, which means n is no longer divisible (without remainder) by k-th prime.
+
+;;; we can call our original (before the first call) input to be N, k-th prime to be pk, then our GI can be n*(pk)^i = N
+;;; now we have our Guess Code:
 (define (ref n k)
   (define (iter n k i)
     (let ((p (k-th_prime k)))
       (cond ((= (remainder n p) 0) (iter (quotient n p) k (+ i 1)))
             (else i))))
   (iter n k 0))
-;;; testing data
+
+;;; As we can see, when the remainder of n/pk is not 0, it will returns the counter i,
+;;; Poof.
+;;; GI: n*pk^i = N
+;;; weak enough? the initial call n to be N, and counter i to be 0, then in this case, N*pk^0 = N, which is true
+;;; strong enough? the stopping condition is, as we mentioned before, when n is no longer divisible by pk without remainder, and our GI is n*pk^i = N, note that in this case,
+;;;                the stopping condition and GI gives us as that our i to be the largest number that N is divisible by pk^i, which means, it returns the number of pk that construct
+;;;                the number N, which represent the first element of the list
+;;; maintained? since every iteritive call reduce n by pk, and add i by 1, now consider the GI: (n/pk)*pk^(i+1) = n*pk^i = N, which is stay the same, then it is maintained. 
+
+;;; then our GI is true
+
+
+;;; here is our testing data
 ;;; 5512500000 (5 2 8 2) 2 => 8
 ;;;     360    (3 2 1) 1   => 2
 ;;; 7640325 (0 4 2 3 1) 3  => 3
+;;; then we can state that our Code is true
 
 
 
