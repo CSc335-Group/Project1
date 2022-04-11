@@ -54,13 +54,23 @@
           (else (iter k i (+ j 1) result))))
   (iter k 0 0 0))
 
+;;; -----------------------------------------------------------------------------------------------------------------------------------
+;;; -- a function myequal? which inputs numbers n representing a list s and m representing a list t, and which checks whether s and
+;;; -----------------------------------------------------------------------------------------------------------------------------------
 
 ;;; the input number n represent list s and the input number m represent list t
-;;; NOTE THAT this appoach won't work if lists have 0 at the tail, 
+;;; NOTE THAT this appoach won't work if lists have 0 at the tail, (since it only allows positive integer in list)
 ;;;           consider list (0 0) and (0 0 0 0)
 ;;;           the constructed number of the two lists are both 1,
 ;;;           we can not distinguish which list it represents since it contruct the same number. 
 ;;;           
+
+;;; IDEA: s=t iff n=m
+;;; then we only need to directly compare n with m, then it will return the same result of comparision of s and t.
+(define (myequal? n m)
+  (cond ((= n m) #t)
+        (else #f)))
+
 ;;; proof.
 ;;; 1. if s=t then n=m
 ;;;    this one is trivial since we construct n by s, and construct m by t, since s=t and prime number index never change,
@@ -106,19 +116,26 @@
 ;;;     We discuss all the possible 3 case of i compare to j, none of the cases are possible, hence, here comes a contradiction, therefore, we proved
 ;;;     The list s is equal to t iff n is equal to m. Q.E.D.
 
-;;; since s=t iff n=m
-;;; then we only need to directly compare n with m, then it will return the same result of comparision of s and t.
-(define (myequal? n m)
-  (cond ((= n m) #t)
-        (else #f)))
 
-
+;;; --------------------------------------------------------------------------------------------------------------
+;;; -- a function head which inputs a number n which represents a list s and which returns the number in the
+;;;    first position of s, that is, the head of s
 ;;; head function
+;;; ----------------------------------------------------------------------------------------------------------------
+;;; Specification
+;;; pre-condition: input a legal number n that represent a positive integer list
+;;; post-condition: returns the first element of the list
 
-;;; testing data
-;;; 5512500000 (5 2 8 2)=> 5
-;;;     360    (3 2 1)  => 3
-;;; 6251175 (0 4 2 3 1) => 0
+;;; Design Idea
+;;; Since the number n represent list s, which is constructed by 2^k0 + 3^k1 + 5^k2 + ...., then we only need to figure out what k0 is
+;;; and also the number n is constructed by the multiplication of prime number
+;;; we only need to figure out how many factor of 2 (which is the first prime number) that the number n has
+;;; here we design a iterative process, which contains a counter i, keep counting how many 2s is divisible (without remainder) by the number n,
+;;; and n keep reducing its value
+;;; the program will terminate when the remainder of n/2 is not 0, which means n is no longer divisible (without remainder) by 2
+
+;;; we can call our original (before the first call) input to be N, then our GI can be n*2^i = N
+;;; now we have our Guess Code:
 (define (head n)
   (define (iter n i)
     (cond ((= (remainder n 2) 0) (iter (quotient n 2) (+ i 1)))
@@ -126,7 +143,25 @@
 
   (iter n 0))
 
-;;; TODO PROOF
+
+;;; As we can see, when the remainder of n/2 is not 0, it will returns the counter i,
+;;; Poof.
+;;; GI: n*2^i = N
+;;; weak enough? the initial call n to be N, and counter i to be 0, then in this case, N*2^0 = N, which is true
+;;; strong enough? the stopping condition is, as we mentioned before, when n is no longer divisible by 2 without remainder, and our GI is n*2^i = N, note that in this case,
+;;;                the stopping condition and GI gives us as that our i to be the largest number that N is divisible by 2^i, which means, it returns the number of 2 that construct
+;;;                the number N, which represent the first element of the list
+;;; maintained? since every iteritive call reduce n by 2, and add i by 1, now consider the GI: (n/2)*2^(i+1) = n*2^i = N, which is stay the same, then it is maintained. 
+
+;;; here is the testing data
+;;; 5512500000 (5 2 8 2)=> 5
+;;;     360    (3 2 1)  => 3
+;;; 6251175 (0 4 2 3 1) => 0
+;;; as we can see, the program is true. 
+
+
+
+
 
 ;;; testing data
 ;;; 5512500000 (5 2 8 2) 2 => 8
