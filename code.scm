@@ -9,17 +9,28 @@
 (define (count n)
   (+ 1 (floor (log n 10))))
 
-
+;;; ---------------------------------------------------------------------------------------------------------------------
 ;;; a helper function determine whether a number n is prime
 ;;; if the number n is prime, returns #t, otherwise #f
+
+;;; Specification
+;;; pre-cond: input a integer n
+;;; post-cond: returns whether n is prime, either #t or #f
 
 ;;; Note that, if a number n is not a prime, the there should be a factor a and b, that n=a*b
 ;;; where a <= sqrt(n) and b >= sqrt(n),
 ;;; then we only need to track whether there exists a number k <= sqrt(n) so that n can be excact divide by k (without remainder)
 ;;; if the number does not exists, then the number is a prime
 
-;;; there should be a faster solution using Sieve of Eratosthenes, but for now I'm not using this
-;;; may implement later
+;;; design idea
+;;; Implement it by iterative
+;;; start with a counter i from 2 to sqrt(n), once n is divisible( without remainder) by i, then it returns #f immediately
+;;; if none of the number from 2 to sqrt(n) that n can be exact divided by, then the process will return #t
+;;; so the termination argument would be i > sqrt(n), or find a i that n can be exact divided by
+
+;;; GI: n can not be divisible by any number from 2 to i-1
+;;; GUESS CODE:
+
 (define (prime? n)
   (define (iter n i)
     (let ((sqrt-n (floor (sqrt n))))
@@ -30,6 +41,29 @@
   (cond ((< n 2) #f)
         (else (iter n 2))))
 
+;;;
+
+;;; PROOF.
+;;; when the iterative process start we pass 2 to i
+;;; Weak enough? when the iterative process start, i=2, this case is trivial, since i-1 = 1 < 2, then we can say our GI to be true
+;;; Strong enough? when the program terminates, that is
+;;;                (1) i > sqrt(n) (or i= sqrt(n)+1), and our GI: n can not be divisible by any number from 2 to i-1,
+;;;                    then n can not be divisible by any number from 2 to sqrt(n), then the program returns #t, which is correct (see NOTE that)
+;;;                (2) n is divisible by i, and our GI: n can not be divisible by any number from 2 to i-1, but since i <= sqrt(n) then the program returns #f (see NOTE that)
+;;;                    which is also true
+;;; Maintained? if the program does not terminate, that is i has not hit the sqrt(n)+1 and n is not divisible by i, and the previous call states that n is not divisible by 2 to i-1
+;;;             then for i+1, our GI: n can not be divisible by any number from 2 to i
+;;;             which is true.
+
+;;; then our GI is true
+;;; here is our tesing data
+;;; 2 => #t
+;;; 4 => #f
+;;; 11 => #t
+;;; 1 => #f
+;;; then we can state that our code is true.
+
+;;; -----------------------------------------------------------------------------------------------------------
 ;;; Specification: a helper function that input a prime number, returns the index
 ;;; 2 => 5
 ;;; 5 => 13
@@ -43,7 +77,9 @@
   (cond ((prime? n) (iter n 2 -1))
         (else -1)))
 
+;;; ---------------------------------------------------------------------------------------------------------
 ;;; Specification: a helper function that input a index k, then it returns the k-th prime number
+
 ;;; pre-condition: input a non-negetive index k
 ;;; post condition:  returns the k-th prime number
 
@@ -190,19 +226,32 @@
 
 
 
+;;; --------------------------------------------------------------------------------------------------------------
+;;; -- more generally, a function ref which inputs a number n representing a list s and which returns the number
+;;;    in the kth position of s
+;;; --------------------------------------------------------------------------------------------------------------
+;;; Specification
+;;; pre-condition: inputs a number n representing a list s and a number k>=0 to be index, the index k and number n should be valid
+;;; post-condition: returns the k-th position of s
 
-
-;;; testing data
-;;; 5512500000 (5 2 8 2) 2 => 8
-;;;     360    (3 2 1) 1   => 2
-;;; 7640325 (0 4 2 3 1) 3  => 3
+;;; Design Idea
+;;; design a iterative process
+;;; start with a counter i
 (define (ref n k)
   (define (iter n k i)
     (let ((p (k-th_prime k)))
       (cond ((= (remainder n p) 0) (iter (quotient n p) k (+ i 1)))
             (else i))))
   (iter n k 0))
-;;; TODO PROOF
+;;; testing data
+;;; 5512500000 (5 2 8 2) 2 => 8
+;;;     360    (3 2 1) 1   => 2
+;;; 7640325 (0 4 2 3 1) 3  => 3
+
+
+
+
+
 
 
 ;;; testing data
