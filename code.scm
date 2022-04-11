@@ -30,7 +30,7 @@
   (cond ((< n 2) #f)
         (else (iter n 2))))
 
-;;; a helper function that input a prime number, returns the index
+;;; Specification: a helper function that input a prime number, returns the index
 ;;; 2 => 5
 ;;; 5 => 13
 ;;; if input number is not prime, it will return -1
@@ -43,16 +43,45 @@
   (cond ((prime? n) (iter n 2 -1))
         (else -1)))
 
-;;; find k-th prime
-;;; input index to find prime number
-;;; 4 => 11
-;;; 2 => 5
+;;; Specification: a helper function that input a index k, then it returns the k-th prime number
+;;; pre-condition: input a non-negetive index k
+;;; post condition:  returns the k-th prime number
+
+;;; Design Idea:
+;;; using a iterative process, find the k-th prime number
+;;; we start with a counter j, that start counting from 0, to determine whether current j is a prime, and another counter i,
+;;; that keep track of how many prime number that we go through so far, and a variable result, keep track of the last prime number's value
+;;; the program will terminate when i > k, that is when we go through all the k-th prime number, then it will returns the last prime number's value that we go through
+
+;;; Then our GI will be: i = largest index of prime number <= j, result = i-th prime number
+
+;;; Here is our GUESS CODE:
+
 (define (k-th_prime k)
   (define (iter k i j result)
     (cond ((> i k) result)
           ((prime? j) (iter k (+ i 1) (+ j 1) j))
           (else (iter k i (+ j 1) result))))
-  (iter k 0 0 0))
+  (iter k 0 0 2))
+
+;;; as we can see, when the iterative process start, we pass i j to be 0 (initially), and result to be 2
+;;; Proof.
+;;; weak enough? When the iterative process start, the result is 2, and both i and j are 0, then our GI: i is the largest index of prime number <= 0 which is 0, and
+;;;              result is 0-th prime number, which is 2, which is correct
+
+;;; strong enough? When the prgram termintates, that is j go through all the k-th prime number, which means i>k, and i is the largest index of prime number <= j
+;;;                then i will be k-th prime number, the result will be the value of i-th prime number, which in this case, is also the k-th prime number, which is correct
+
+;;; maintained? if current j is prime, then (i+1) would be the largest index of prime number <= (j+1) and result = j (which in this case, the (i+1)th prime number
+;;;             if current j is not prime, then i would be the largest index of prime number <= (j+1) and result is still maintained the previous result value
+;;;             which in this case, maintained our GI to be True
+
+;;; testing data
+;;; 0 => 2
+;;; 4 => 11
+;;; 2 => 5
+;;; Then we can say our program to be true
+
 
 ;;; -----------------------------------------------------------------------------------------------------------------------------------
 ;;; -- a function myequal? which inputs numbers n representing a list s and m representing a list t, and which checks whether s and
