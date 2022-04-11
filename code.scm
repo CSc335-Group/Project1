@@ -145,13 +145,13 @@
 ;;; 5512500000 (5 2 8 2) => 2
 ;;;     360    (3 2 1)   => 1
 ;;; 7640325 (0 4 2 3 1)  => 1
-(define (tail n)
-  (define (iter n curr i)
-    (let ((h (ref n i)) ;;; h for current head
-          (cp (k-th_prime i))) ;; cp for current prime
-      (cond ((= n 1) curr)
-            (else (iter (/ n (expt cp h)) h (+ i 1))))))
-  (iter n (head n) 0))
+;(define (tail n)
+;  (define (iter n curr i)
+;    (let ((h (ref n i)) ;;; h for current head
+;          (cp (k-th_prime i))) ;; cp for current prime
+;      (cond ((= n 1) curr)
+;            (else (iter (/ n (expt cp h)) h (+ i 1))))))
+;  (iter n (head n) 0))
 
 
 ;;; modified tail function
@@ -159,7 +159,7 @@
 ;;; 5512500000 (5 2 8 2) => 656100 (2 8 2)
 ;;;     360    (3 2 1)   => 12 (2 1)
 ;;; 7640325 (0 4 2 3 1)  => 126000 (4 2 3 1)
-(define (tail2 n)
+(define (tail n)
   (define (iter n result i)
     (let ((h (ref n i)) (cp (k-th_prime i)) (prev_p (k-th_prime (- i 1))))
       (cond ((= n 1) result)
@@ -262,7 +262,7 @@
 ;;; 288 (5 2) and 18 (1 2) => 70560 (5 2 1 2)
 (define (myappend m n)
   (define (iter m n)
-    (let ((ls (len m)) (first_elt (head n)) (rest (tail2 n)))
+    (let ((ls (len m)) (first_elt (head n)) (rest (tail n)))
       (cond ((= n 1) m)
             (else (iter (* m (expt (k-th_prime ls) first_elt)) rest)))))
   (iter m n))
