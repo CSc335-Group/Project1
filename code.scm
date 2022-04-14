@@ -267,7 +267,6 @@
 ;;; 5512500000 (5 2 8 2) => 656100 (2 8 2)
 ;;;     360    (3 2 1)   => 12 (2 1)
 ;;; 7640325 (0 4 2 3 1)  => 126000 (4 2 3 1)
-
 ;;; --------------------------------------------------------------------------------------------------------------
 
 
@@ -422,12 +421,30 @@
 ;;; --------------------------------------------------------------------------------------------------------------
 
 
-;; HELPER FUNCTIONS FOR SORT
-;;; Remove function
-;;; removes element at index i from the given list
-;; 112500000 (5 2 8) i=1 => 209952 (5 8)
-;;     360    (3 2 1) i=0 => 12 (2 1)
-;; 126000 (4 2 3 1) p=3  => 18000 (4 2 3)
+;;; HELPER FUNCTIONS FOR SORT
+;;; --------------------------------------------------------------------------------------------------------------
+;;; REMOVE-AT FUNCTION
+;;; Specification:
+;;; Pre-condition: inputs an integer n>=1 that represents a list s and an index 0<=i<=(len s)-1
+;;; Post-condition: returns a number representing the list obtained from removing the element
+;;; at index i from s
+
+;;; DESIGN IDEA:
+;;; NOTE: S is the original inputed list. N is the the number representing list S.
+;;; We use an iterative approach. The idea is to build a new list, represented by the variable
+;;; result, that will hold all the elements in S except the element at i. We'll do this by
+;;; having two index variables: nIndex and resIndex. nIndex will be used to step through list S, and
+;;; resIndex will be used to build the new list (represented by result).
+
+;;; GUESS INVARIANT (GI):
+;;; result = number representing the list containing all elements in S at position nIndex
+;;;          except when nIndex=i
+
+;;; GUESS CODE:
+;;; Local Variable Explanations:
+;;;    p: the prime at index resIndex
+;;;    value: the value in S at position nIndex
+
 (define (remove-at n i)
   (define (iter n result nIndex resIndex)
     (let ((p (k-th_prime resIndex)) (value (ref n nIndex)))
@@ -435,6 +452,27 @@
             ((= nIndex i) (iter n result (+ nIndex 1) resIndex))
             (else (iter n (* result (expt p value)) (+ nIndex 1) (+ resIndex 1))))))
   (iter n 1 0 0))
+
+;;; TESTS:
+;;; WEAK ENOUGH? In the first call to iter, n is set N and the program never changes it; result is
+;;; set to 1 and nIndex and resIndex are both set to 0. In this first call, the GI is true because we
+;;; have not yet processed any of the elements in S so result represents the empty list.
+
+;;; STRONG ENOUGH? The GI states that result represents the list containing all elements in S
+;;; at index nIndex except when nIndex=i. The termination condition triggers when we've iterated through
+;;; all the elements in S. Combining the GI with the termination condition, result will represent
+;;; the list containing all the elements in S except the element at i; thus our post-condition is true.
+
+;;; PRESERVABLE? To preserve the GI, at each iteration we check if nIndex equals i. If not, we simply add
+;;; the element at nIndex in S to result and increment nIndex and resIndex. Else, we increment nIndex
+;;; but do nothing to result or resIndex.
+
+;;; testing data
+;;; 112500000 (5 2 8) i=1 => 209952 (5 8)
+;;;     360    (3 2 1) i=0 => 12 (2 1)
+;;; 126000 (4 2 3 1) p=3  => 18000 (4 2 3)
+;;; --------------------------------------------------------------------------------------------------------------
+
 
 ;;; min function to find min of list
 ; testing data
@@ -513,6 +551,19 @@
                 (subset-of? (/ m (expt (k-th_prime last_index) last_elt)) n))
            #t)
           (else #f))))
+
+;; equal-sets? function
+;; idea is to check if the sets have the same length
+;; if not, immediately return false
+;; else, check if one set is a subset of the other
+; testing data
+;; n=112500000 (5 2 8), m=26244 (2 8) => #f
+;;     360    (3 2 1), m=1500 (2 1 3) => #t
+;;     360    (3 2 1), m=360 (3 2 1) => #t
+(define (equal-sets? m n)
+  (cond ((not (= (len m) (len n))) #f)
+        (else (subset-of? m n))))
+
 
 
 ;; union function
