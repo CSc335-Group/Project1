@@ -12,7 +12,7 @@
 ;;; using product of prime numbers to implement lists. We have given a counter-example to explain our thinking. We 
 ;;; have not considered a way to implement lists that contain zero as an element.
 
-;;; Most function have been implement using iteration except for the subset-of? function which was created using 
+;;; Most functions have been implemented using iteration except for the subset-of? function which was created using 
 ;;; recursion. Functions are separated by horizontal lines.
 
 ;;; --------------------------------------------------------------------------------------------------------------
