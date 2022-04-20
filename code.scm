@@ -19,7 +19,7 @@
 
 
 
-
+;;; START OF FUNCTION DECLARATIONS AND CODE
 ;;; --------------------------------------------------------------------------------------------------------------
 ;;; a helper function determine whether a number n is prime
 ;;; if the number n is prime, returns #t, otherwise #f
