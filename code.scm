@@ -861,7 +861,7 @@
 ;;; its very similar to the lists of positive integers, but instead, the power part of each prime number should also be a number that representing a list
 ;;; for example ((1) (2 3) (3 1 5))
 ;;; can be represented as (2^(2^1) * 3^(2^2*3^3) * 5^(2^3*3^1*5^5))
-;;; tehn the approach is pretty similar to privious one,
+;;; then the approach is pretty similar to previous one,
 ;;; if we want to develop the scheme program, we could simply use the same program that we developed to implement this, but we just need to slightly change our pre-condition and post-condition
 
 ;;; the pre-condition would be, input a number n that n could be factorize as multiplication of primes as p0^k0*p1^k1*...*pi^ki, where k0, k1, ... ki can all be factorize as
