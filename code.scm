@@ -1,6 +1,23 @@
 ;;; Project 1
 ;;; Group member: Baishaki Debi, Yi Lin
+;;; Email Addresses: bdebi000@citymail.cuny.edu, ylin026@citymail.cuny.edu
 ;;; Spring 2022
+
+;;; --------------------------------------------------------------------------------------------------------------
+;;; INTRODUCTION:
+
+;;; All list and set functions are completed and work (to the best of our knowledge). We were somewhat able to 
+;;; figure out how to implement lists of lists and were not able to figure out how to implement lists containing both 
+;;; positive integers and lists. For this latter part, we don't think it can be implemented by our current method of 
+;;; using product of prime numbers to implement lists. We have given a counter-example to explain our thinking. We 
+;;; have not considered a way to implement lists that contain zero as an element.
+
+;;; Most function have been implement using iteration except for the subset-of? function which was created using 
+;;; recursion. Functions are separated by horizontal lines.
+
+;;; --------------------------------------------------------------------------------------------------------------
+
+
 
 
 ;;; --------------------------------------------------------------------------------------------------------------
