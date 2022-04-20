@@ -277,36 +277,25 @@
 
 
 
-;;; --------------------------------------------
-;;; use your tail function
 
-;;; --------------------------------------------
+;;; testing data
+;;; 5512500000 (5 2 8 2) => 2
+;;;     360    (3 2 1)   => 1
+;;; 7640325 (0 4 2 3 1)  => 1
+(define (tail n)
+  (define (iter n curr i)
+    (let ((h (ref n i)) ;;; h for current head
+          (cp (k-th_prime i))) ;; cp for current prime
+      (cond ((= n 1) curr)
+            (else (iter (/ n (expt cp h)) h (+ i 1))))))
+  (iter n (head n) 0))
+
+;;; TODO PROOF
 
 
-
-;;; ---------------------------------------------------------------------------------------------------------------------------------
-;;; -- a function insert-at-head which inputs a number n representing a list s and a second number p, and which returns the number
-;;;    representing the list obtained by inserting p at the head of the list s 
-;;; ---------------------------------------------------------------------------------------------------------------------------------
-;;; Specification
-;;; pre condition: inputs a number n representing a list s and a number p>=0 to be number to be inserted, number n should be valid (can be represent as factor of prime)
-;;; post condition: return a number that represent the list of inserting p at the head of list s
-
-;;; Design Idea
-;;; the design idea is going to construct the number that represent the list of inserting p at the head of list s, we use a iterative procedure to implement this.
-;;; We first use a counter i, that represent the i-th place of the newly constructed list, then we also need a result, to store the current constructed result.
-;;; So, as we state in the specification, we need to construct a number that represetn the list of inserting p at the head of list s, then the initial call of the
-;;; iterative process, result would be 2^p and i should be 0, since 2 is the first prime number and p should be at 0's place of new list. Then we start "copy" the list s
-;;; to our newly constructed list (let's call it t), in this procedure, we called h to be i-th elements of n, p to be current i-th prime number, and np to be i+1 prime number,
-;;; then the iterative will keep dividing n by p^h, and result times np^h, that is retreiving i-th place element of s and add it to the (i+1)-th place of t, and the counter adds up by 1 each time
-;;; So when the program terminates, that is when n = 1, which means, all the elements in s are all retreived, the copy process finished
-
-;;; now here is our GUESS INVARIANT:
-;;; Let S to be the list that initial n represeted, Let R to be list (p)+S
-;;; Let s to be the list that current n represented and t to be current result repesented,
-;;; then the GI would be, t+s = R
-
-;;; Here we have our GUESS CODE:
+;;; 5512500000 (5 2 8 2) 2 => 16950244380300
+;;; 360 (3 2 1) 3 => 37800 (3 3 2 1)
+;;; 7640325 (0 4 2 3 1) 8  => 135655520000 (8 0 4 2 3 1)
 (define (insert-at-head n p)
   (define (iter n result i) ;;; the result is the constructed #
     (let ((h (ref n i))
@@ -316,49 +305,12 @@
             (else (iter (/ n (expt p h)) (* result (expt np h)) (+ i 1))))))
   (iter n (expt 2 p) 0)) ;;; initial pass 2^p to result since 2 is the first prime
 
-;;; PROOF
-;;; weak enough? when the iterative procedure start, s to be the list that initial n represented which is S, the list t of result represent is (p) since result=2^p, then t+s = (p)+S = R
-;;;              as defined, so this case is true;
-;;; strong enough?  when the iterative process terminates, that is when n = 1, which means the s is empty, note that, for each iterative process, s retreive i-th place element to t's i+1-th place,
-;;;                 therefore, in this case, when s is  empty, that means all elements in S are goes into t, which means, current t = (p)+S, then our GI: t+s = (p)+S is also true.
-;;; preservable? consider a single iterative call, for the next iterative call, we retreive i-th place data of s to the i+1-th place of t, then the GI: t+s will stay unchanged since it
-;;;              just move a single current first elements of s to the last elements of t, then our GI is true
-
-;;; hence we can say that our GUESS INVARIANT is proved to be true.
-
-;;; Here is our testing data for GUESS CODE
-;;; 5512500000 (5 2 8 2) 2 => 16950244380300
-;;; 360 (3 2 1) 3 => 37800 (3 3 2 1)
-;;; 7640325 (0 4 2 3 1) 8  => 135655520000 (8 0 4 2 3 1)
-
-;;; We can state that OUR GUESS CODE is true. 
 
 
-;;; ------------------------------------------------------------------------------------------------------------------
-;;; -- a function len which inputs a number n which represents a list s and which returns the number of elements of s
-;;; ------------------------------------------------------------------------------------------------------------------
-
-;;; SPECIFICATION
-;;; pre-condition: input a number n that represents a list s, number n should be valid (can be represent as factor of prime)
-;;; post-condition:  return the length of the list s that represented by n
-
-;;; DESIGN IDEA:
-;;; The design idea is using a iterative process, we first need a counter i to keep track of the current length of n that we already count,
-;;; we let h to be i-th place element of list s, p to be i-th prime number, during the iterative process, the number n keep deviding by h,
-;;; which means s is retreiving its i-th element and meanwhile the counter i counts up by 1, so when the process terminates,
-;;; that is when n=1, s is empty, which means it retreived all the elements, and i is the length of the list S which is initial n represented.
-;;; initially we pass 0 to the counter i since before the iterative process, the retreived part is none. 
-
-;;; ----------------------------------------
-;;; 0 0 ... retreived ... 0 | not retreived
-;;; ----------------------------------------
-;;; 0 1 .................... i ....... length of S
-
-;;; GUESS INVARIANT:
-;;; Let S to be the list that initial n represented, s to be the list that current n represented
-;;; Then our GI: the counter i = length of retreived part of s
-;;;
-;;; GUESS CODE
+;;; testing data
+;;; 5512500000 (5 2 8 2) => 4
+;;;     360    (3 2 1)   => 3
+;;; 7640325 (0 4 2 3 1)  => 5
 (define (len n)
   (define (iter n i)
     (let ((h (ref n i))
@@ -366,133 +318,49 @@
       (cond ((= n 1) i)
             (else (iter (/ n (expt p h)) (+ i 1))))))
   (iter n 0))
-;;; PROOF.
-;;; weak enough? when the initial call of the iterative process, the retreived part of S is none, hence i=0, which is true since length of retreived part of s is going to be 0
-;;; strong enough? when the iterative process terminates, that is whne n = 1, s finished retreiving, to be as a empty list (0 0 ... 0), here is the diagram
-;;;                -----------------------
-;;;                0 0 ... retreived ... 0
-;;;                -----------------------
-;;;                0 1 ................... i
-;;;                                    length of S
-;;;                here in this case, our GI: i = length of retreived part of s, since in this case, all the elements in S is retreived, then i is going to be the length of S,
-;;;                hence our GI is true.
-;;; preservable? in the middle of iterative call, i is the counter of lenght of retreived part of s, then for the next iterative call, n is dividing by p^(element of i-th place of s),
-;;;              that is retreiving i-th element of s and replace it to be 0, then our GI: the counter (i+1) to be length of retreived part of s, since the retreived part adds 1 elements,
-;;;              then the GI is true in this case
-
-;;; hence our GI is true
-
-;;; TEST
-;;; Here is our testing data for GUESS CODE:
-;;; 5512500000 (5 2 8 2) => 4
-;;;     360    (3 2 1)   => 3
-;;; 7640325 (0 4 2 3 1)  => 5
-;;; We can state that OUR GUESS CODE is true. 
+;;; TODO PROOF
 
 
 
-
-;;; -------------------------------------------------------------------------------------------------------------------------
-;;; -- a function snoc which inputs a number n which represents a list s and a second number q, and which returns the number
-;;;    representing the list obtained by inserting q at the end of the list s
-;;; -------------------------------------------------------------------------------------------------------------------------
-
-;;; SPECIFICATION
-;;; pre-condition: inputs a number n that represents a list s, and a number q
-;;; post-condition: returns a number that represents a list t where t=s+(q)
-
-;;; DESIGN IDEA:
-;;; Since we implements the len function and k-th prime function, we can simply construct the number that represents t by n*((len n)-th prime number)^q
-;;; since initial n is representing a list s that indexing from 0 to (len n)-1, then we just need to add q to the (len n) place of s, it will gives our the list t
-
-;;; GUESS CODE:
+;;; testing data
+;;; 5512500000 (5 2 8 2) 2 => 667012500000 (5 2 8 2 2)
+;;;     360    (3 2 1) 3   => 123480 (3 2 1 3)
+;;; 7640325 (0 4 2 3 1) 8  => 6232447820924325 (0 4 2 3 1 8)
 (define (snoc n q)
   (let ((l (len n)))
     (* n (expt (k-th_prime l) q))))
 
-;;; TEST
-;;; 5512500000 (5 2 8 2) 2 => 667012500000 (5 2 8 2 2)
-;;;     360    (3 2 1) 3   => 123480 (3 2 1 3)
-;;; 7640325 (0 4 2 3 1) 8  => 6232447820924325 (0 4 2 3 1 8)
 
+;;; ?????????????????????????????????????????????????????????????
+;;; I think the result should be the same as the tail function???
+;;; whats the diff between last and tail?????????????????????????
+;;; ?????????????????????????????????????????????????????????????
 
-
-;;; ---------------------------------------------------------------------------------------------------------------------------
-;;; -- a function last which inputs a number n which represents a non-empty list s and which returns the rightmost element of s
-;;; ---------------------------------------------------------------------------------------------------------------------------
-
-;;; SPECIFICATION
-;;; pre-condition: intputs a number n which represents a non-empty list s, number n should be valid (can be represent as factor of prime)
-;;; post-condition: outputs the rightmost(last) element of s
-
-;;; DESIGN IDEA
-;;; A tentative solution is going to use the recursive process, very similar to what we did for ref function:
-;;;(define (last n)
-;;;  (let ((lp (k-th_prime (- (len n) 1))))
-;;;    (define (rec n p)
-;;;      (cond ((not (= (remainder n p) 0)) 0)
-;;;            (else (+ (rec (/ n p) p) 1))))
-;;;    (rec n lp)))
-
-;;; but since we implemented the ref function and len function
-;;; here is a extremely easy solution that is take the ref of n of ((len n)-1) place
-
-;;; GUESS CODE
-(define (last2 n)
-    (ref n (- (len n) 1)))
-
-;;; TEST
-;;; here is the testing data
+;;; testing data
 ;;; 5512500000 (5 2 8 2) => 2
 ;;;     360    (3 2 1)   => 1
 ;;; 7640325 (0 4 2 3 1)  => 1
 
+(define (last n)
+  (let ((lp (k-th_prime (- (len n) 1))))
+    (define (rec n p)
+      (cond ((not (= (remainder n p) 0)) 0)
+            (else (+ (rec (/ n p) p) 1))))
+    (rec n lp)))
+
+;;; TODO: PROOF
 
 
+;;; the general idea of insert is going to construct the output
+;;; the first part of the result would be # before position y
+;;; then we add our inserted value to the tail of our list
+;;; and last we continue our constructing
 
+;;; testing data
+;;; 5512500000 (5 2 8 2) 7 8 => 15694670722500000 (5 2 7 8 2)
+;;;     360    (3 2 1)   => 1
+;;; 7640325 (0 4 2 3 1)  => 1
 
-;;; --------------------------------------------------------------------------------------------------------------------------------
-;;; -- a function insert-at which inputs a number n representing a list s, a second number x, and a third number y and which returns
-;;;    the number representing the list obtained by inserting x in the yth position of s.  You will need preconditions
-;;;    to ensure that the number y makes sense as a position in s
-;;; --------------------------------------------------------------------------------------------------------------------------------
-
-;;; SPECIFICATION
-;;; pre-condition: inputs a number n representing a list s, where number n should be valid (can be represent as factor of prime), a number x > 0 to be the elements to be inserted
-;;;                a number y > 0 to be the position of s to be inserted
-;;; post-condition: return a number that representing the list by inserting x in y-th position of s
-
-;;; DESIGN IDEA:
-;;; we use a iterative process to implement this function, the general idea of insert is going to construct the output, 
-;;; the first part of the result would be number of list before position y, then we add elements x at position y, then we continue our constructing, copying the rest of s after position
-;;; y to the constructed list
-;;; here is our diagram of how our list constructed
-
-;;; --------------------------------------------------------------------
-;;;  elems before position y       | x |  elems after position y
-;;; --------------------------------------------------------------------
-;;;  constructed      |        not yet constructed
-;;; --------------------------------------------------------------------
-;;; 0 1 .............. j ..........  y  .............................len(n)
-
-;;; here is the diagram of original list:
-;;; ------------------------------------------------
-;;;   copied               | not yet copied
-;;; ------------------------------------------------
-;;; 0 1 ................... i ................. len(n)-1
-
-;;; our design idea is pretty intuitively, we use 2 arguments i and j as 2 index pointers for original list and constructed list, a result argument to store the number representing constructed list so far, 
-;;; we let p to be j-th prime, which prepared for the next elements that we want to add to the constructed list, curr to be current i-th element of list s (represented by n),
-;;; so as we can see from above diagram for constructed list, when j is greater then len(n), that means the new list construction is done, then it will return the result, which is our termination arguments,
-;;; and since we want to insert x at y postion, so when j hit y position, we insert x, and increase j, but we will not increase i in this case, since i is the index for not yet copied, and this case we did
-;;; not copy anything from original list; for other case, that is the copy step, we copy curr to constructed list, and increase i and j by 1.
-
-;;; GUESS INVARIANT:
-;;; let final constructed list to be T, original list to be S, the current constructed list to be t
-;;; then our GI is:
-;;; j is the first index of not constructed part of T and i is the first index of not yet copied of S and the constructed part of T(which is t) is true
-
-;;; Here is our GUESS CODE:
 (define (insert-at n x y)
   (define (iter n result i j x y) ;;; i is index of original list, j is index of constructed list
     (let ((p (k-th_prime j))
@@ -503,29 +371,15 @@
             (else (iter n (* result (expt p curr)) (+ i 1) (+ j 1) x y)))))
   (iter n 1 0 0 x y))
 
-;;; PROOF.
-;;; weak enough? before the first call of the iterative process, we pass result to be 1, that is t to be empty, i and j both to be 0, which represent the index of not yet constructed and
-;;;              the first index of not yet copied, in this case, since t is still empty, the not yet constructed index is 0, and since we havn't start copying, the not yet copy index is
-;;;              also to be 0; and the current constructed part of t which is empty, is true, this case is trivial, the GI is true.
-;;; strong enough? when the iterative process terminates, that is when j hits (len n)+1, the iterative process terminates, then in this case, the first elements of not yet constructed is
-;;;                going to be len(n)+1, or we can say, the last elements of constructed part of T is going to be j-1 which is len(n), note that the len(T) should be len(n)+1 since T is
-;;;                going to be elems before y + x + elems after y therefor j is still the first index of not constructed part of T; Similarly, i is still the first index of not yet copied
-;;;                part of S (i-1 is the last index of copied part), and since when the process terminates, t would be elems before y + x + elems after y, then in this case, t=T, hence t
-;;;                is correct, therefore, our GI will be correct.
-;;; preservable? During an iterative process called, if the j is not y, then it will increase the i and j, and copy the current element of i-th position of S to the last elements of t,
-;;;;             Hence our GI is true since its simply copy and construct new list and increase both index, j+1 will be the first index of new not constructed part of T and i+1 will be the
-;;;              first index of not copied part of S, and t will add one copied element and stay true.
-;;;              If j=y, then it will add x to the t and only increase j, now j+1 will be the first index of new not constructed part of T since we add an element x, and i stays the same to
-;;;              be the the first index of not yet copied part of S since we did not copy anything from S this case, and t stays true, since we add x to y position of t.
-;;;              Hence the GI in this case is true.
 
-;;; Therefore, our GUESS INVARIANT is true
-;;;
-;;; TEST
-;;; Here is our testing data
 
-;;; 5512500000 (5 2 8 2) 7 8 => 15694670722500000 (5 2 7 8 2)
-;;;     360    (3 2 1) 6 2   => 7875000 (3 2 6 1)
-;;; 7640325 (0 4 2 3 1) 9 3  => 1413932885390025 (0 4 2 9 3 1)
+;;; the idea would be go through the list t
+;;; and then one by one append the number value to the back of the list s
+;(define (my-append s t)
+;  (define (iter s t result i)
+;    (let ((l (len result))
+;          (p (
 
-;;; After test, we can state that our GUESS CODE is TRUE
+
+
+;; half done, will be finish very soon
