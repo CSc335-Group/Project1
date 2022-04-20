@@ -166,7 +166,6 @@
 ;;; --------------------------------------------------------------------------------------------------------------
 ;;; -- a function head which inputs a number n which represents a list s and which returns the number in the
 ;;;    first position of s, that is, the head of s
-;;; head function
 ;;; --------------------------------------------------------------------------------------------------------------
 ;;; Specification
 ;;; pre-condition: input a legal number n that represent a positive integer list
@@ -302,7 +301,7 @@
 
 ;;; --------------------------------------------------------------------------------------------------------------
 ;;; -- a function insert-at-head which inputs a number n representing a list s and a second number p, and which 
-;;; returns the number representing the list obtained by inserting p at the head of the list s 
+;;;    returns the number representing the list obtained by inserting p at the head of the list s 
 ;;; --------------------------------------------------------------------------------------------------------------
 ;;; Specification
 ;;; pre condition: inputs a number n representing a list s and a number p>=0 to be number to be inserted, number n should be valid (can be represent as factor of prime)
