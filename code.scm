@@ -529,3 +529,40 @@
 ;;; 7640325 (0 4 2 3 1) 9 3  => 1413932885390025 (0 4 2 9 3 1)
 
 ;;; After test, we can state that our GUESS CODE is TRUE
+
+;;; ((2) 4)
+;;; 3^4 = 3^2^2
+
+
+
+;; Can this method be used to represent lists of lists of positive integers, such as ((1) (2 3) (3 1 5))?
+;; If so, show with a developed scheme program, how you would do it.  If not, explain why, in detail.
+
+;;; Yes, I think this approach can be used to represent lists of lists of positive integers
+;;;
+;;; its very similar to the lists of positive integers, but instead, the power part of each prime number should also be a number that representing a list
+;;; for example ((1) (2 3) (3 1 5))
+;;; can be represented as (2^(2^1) * 3^(2^2*3^3) * 5^(2^3*3^1*5^5))
+;;; tehn the approach is pretty similar to privious one,
+;;; if we want to develop the scheme program, we could simply use the same program that we developed to implement this, but we just need to slightly change our pre-condition and post-condition
+
+;;; the pre-condition would be, input a number n that n could be factorize as multiplication of primes as p0^k0*p1^k1*...*pi^ki, where k0, k1, ... ki can all be factorize as
+;;; multiplication of primes as p0^j0*p1^j1*...*pi^ji
+;;; the post-condition would be, returns a numbers that representing a list/list of lists (depends on what function)
+
+;;; for example
+;;; ref function
+;;; pre-condition: input a number n>1 that represents list of lists, that n could be factorize as multiplication of primes as p0^k0*p1^k1*...*pi^ki, where k0, k1, ... ki can all be factorize as
+;;;                multiplication of primes as p0^j0*p1^j1*...*pi^ji
+;;; post-condition: returns a numbers > 0 that representing a list, that the number could be factorize as multiplication of primes as p0^k0*p1^k1*...*pi^ki
+
+;;; the implementation would be exactly the same as the ref
+(define (ref2 n k)
+  (define (iter n k i)
+    (let ((p (k-th_prime k)))
+      (cond ((= (remainder n p) 0) (iter (quotient n p) k (+ i 1)))
+            (else i))))
+  (iter n k 0))
+
+;;; (* (expt 2 2) (expt 3 36) (expt 5 75000))
+
