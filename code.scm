@@ -219,6 +219,24 @@
   (iter n 1 0 0 x y))
 
 
+
+
+;;; --------------------------------------------------------------------------------------------------------------
+;;; Can this method be used to represent lists which contain both positive integers and lists of positive integers?
+;;; If so, explain briefly how you would do it. If not, explain why, in detail.
+
+;;; It is not possible to use this method to represent lists that contain both positive integers and lists of
+;;; positive integers because currently we have no way to distinguish when a list element is just a number and when
+;;; it is a list. Let's examine the list (4 (2)). Representing this list using our current method yields:
+;;; 2^4 * 3^(2^2) = 2^4 * 3^4. Here's where we run into a problem. The prime representation of (4, (2)) is exactly the
+;;; same as the list (4 4) but these two lists are clearly not the same!
+
+;;; Our prime representation strips away the information that a positive integer such as 4 is just an integer and not
+;;; the list (2) and vice versa. Thus, we've come across a counter-example that disproves the claim that our current
+;;; method of representing lists can represent lists with both positive integers and lists of positive integers.
+;;; --------------------------------------------------------------------------------------------------------------
+
+
 ;;; --------------------------------------------------------------------------------------------------------------
 ;;; TAIL FUNCTION
 ;;; Specification:
