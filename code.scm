@@ -456,12 +456,12 @@
 
 ;;; DESIGN IDEA
 ;;; A tentative solution is going to use the recursive process, very similar to what we did for ref function:
-;;;(define (last n)
-;;;  (let ((lp (k-th_prime (- (len n) 1))))
-;;;    (define (rec n p)
-;;;      (cond ((not (= (remainder n p) 0)) 0)
-;;;            (else (+ (rec (/ n p) p) 1))))
-;;;    (rec n lp)))
+(define (last n)
+  (let ((lp (k-th_prime (- (len n) 1))))
+    (define (rec n p)
+      (cond ((not (= (remainder n p) 0)) 0)
+            (else (+ (rec (/ n p) p) 1))))
+    (rec n lp)))
 
 ;;; but since we implemented the ref function and len function
 ;;; here is a extremely easy solution that is take the ref of n of ((len n)-1) place
