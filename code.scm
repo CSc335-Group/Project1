@@ -119,6 +119,9 @@
 ;;; -- a function myequal? which inputs numbers n representing a list s and m representing a list t, and which 
 ;;;    checks whether s and
 ;;; --------------------------------------------------------------------------------------------------------------
+;;; SPECIFICATION
+;;; pre condition: inputs numbers n representing list s and numbers m representing lists t, n and m should be valid (can be factorize by prime numbers or 1)
+;;; post condition: output whether the list n represented and the list that represented are the same
 
 ;;; the input number n represent list s and the input number m represent list t
 ;;; NOTE THAT this appoach won't work if lists have 0 at the tail, (since it only allows positive integer in list)
@@ -127,7 +130,7 @@
 ;;;           we can not distinguish which list it represents since it contruct the same number. 
 ;;;           
 
-;;; IDEA: s=t iff n=m
+;;; IDEA: s=t iff n=m (see proof)
 ;;; then we only need to directly compare n with m, then it will return the same result of comparision of s and t.
 (define (myequal? n m)
   (cond ((= n m) #t)
@@ -225,10 +228,10 @@
 ;;;    in the kth position of s
 ;;; --------------------------------------------------------------------------------------------------------------
 ;;; Specification
-;;; pre-condition: inputs a number n representing a list s and a number k>=0 to be index, the index k and number n should be valid
+;;; pre-condition: inputs a number n representing a list s and a number k>=0 to be index, the index k and number n should be valid (n should represent a list and k < length of list)
 ;;; post-condition: returns the k-th position of s
 
-;;; Design Idea
+;;; DESIGN IdEA
 ;;; design a iterative process
 ;;; start with a counter i, very similar to head function, but instead of we retreive 2, we retreive the k-th prime number
 ;;; Since the number n represent list s, which is constructed by 2^j0 + 3^j1 + 5^j2 + ....some prime ^ jk
@@ -239,7 +242,7 @@
 ;;; and n keep reducing its value
 ;;; the program will terminate when the remainder of n/k-th prime is not 0, which means n is no longer divisible (without remainder) by k-th prime.
 
-;;; we can call our original (before the first call) input to be N, k-th prime to be pk, then our GI can be n*(pk)^i = N
+;;; GUESS INVARIANT: we can call our original (before the first call) input to be N, k-th prime to be pk, then our GI can be n*(pk)^i = N
 ;;; now we have our Guess Code:
 
 (define (ref n k)
@@ -256,7 +259,7 @@
 ;;; strong enough? the stopping condition is, as we mentioned before, when n is no longer divisible by pk without remainder, and our GI is n*pk^i = N, note that in this case,
 ;;;                the stopping condition and GI gives us as that our i to be the largest number that N is divisible by pk^i, which means, it returns the number of pk that construct
 ;;;                the number N, which represent the first element of the list
-;;; maintained? since every iteritive call reduce n by pk, and add i by 1, now consider the GI: (n/pk)*pk^(i+1) = n*pk^i = N, which is stay the same, then it is maintained. 
+;;; preservable? since every iteritive call reduce n by pk, and add i by 1, now consider the GI: (n/pk)*pk^(i+1) = n*pk^i = N, which is stay the same, then it is maintained. 
 
 ;;; then our GI is true
 
@@ -354,13 +357,13 @@
 ;;;              as defined, so this case is true;
 ;;; strong enough?  when the iterative process terminates, that is when n = 1, which means the s is empty, note that, for each iterative process, s retreive i-th place element to t's i+1-th place,
 ;;;                 therefore, in this case, when s is  empty, that means all elements in S are goes into t, which means, current t = (p)+S, then our GI: t+s = (p)+S is also true.
-;;; preservable? consider a single iterative call, for the next iterative call, we retreive i-th place data of s to the i+1-th place of t, then the GI: t+s will stay unchanged since it
+;;; preservable? consider in an iterative call, for the next iterative call, we retreive i-th place data of s to the i+1-th place of t, then the GI: t+s will stay unchanged since it
 ;;;              just move a single current first elements of s to the last elements of t, then our GI is true
 
 ;;; hence we can say that our GUESS INVARIANT is proved to be true.
 
 ;;; Here is our testing data for GUESS CODE
-;;; 5512500000 (5 2 8 2) 2 => 16950244380300
+;;; 5512500000 (5 2 8 2) 2 => 16950244380300 (2 5 2 8 2)
 ;;; 360 (3 2 1) 3 => 37800 (3 3 2 1)
 ;;; --------------------------------------------------------------------------------------------------------------
 
@@ -371,7 +374,7 @@
 ;;; --------------------------------------------------------------------------------------------------------------
 ;;; SPECIFICATION
 ;;; pre-condition: input a number n that represents a list s, number n should be valid (can be represent as factor of prime)
-;;; post-condition:  return the length of the list s that represented by n
+;;; post-condition:  return a number that is the length of the list s that represented by n
 
 ;;; DESIGN IDEA:
 ;;; The design idea is using a iterative process, we first need a counter i to keep track of the current length of n that we already count,
@@ -456,19 +459,20 @@
 
 ;;; DESIGN IDEA
 ;;; A tentative solution is going to use the recursive process, very similar to what we did for ref function:
-(define (last n)
-  (let ((lp (k-th_prime (- (len n) 1))))
-    (define (rec n p)
-      (cond ((not (= (remainder n p) 0)) 0)
-            (else (+ (rec (/ n p) p) 1))))
-    (rec n lp)))
+;;;
+;;;(define (last n)
+;;;  (let ((lp (k-th_prime (- (len n) 1))))
+;;;    (define (rec n p)
+;;;      (cond ((not (= (remainder n p) 0)) 0)
+;;;            (else (+ (rec (/ n p) p) 1))))
+;;;    (rec n lp)))
 
 ;;; but since we implemented the ref function and len function
 ;;; here is a extremely easy solution that is take the ref of n of ((len n)-1) place
 
 ;;; GUESS CODE
 
-(define (last2 n)
+(define (last n)
     (ref n (- (len n) 1)))
 
 ;;; TEST
@@ -899,7 +903,9 @@
             (else i))))
   (iter n k 0))
 
-;;; (* (expt 2 2) (expt 3 36) (expt 5 75000))
+;;; test
+;;; (ref2 (* (expt 2 (expt 2 0)) (expt 3 (* (expt 2 2) (expt 3 3))) (expt 5 (* (expt 2 3) (expt 3 1) (expt 5 5)))) 2) => 75000
+;;; since 2^3*3^1*5^5 = 75000, which is correct
 ;;; --------------------------------------------------------------------------------------------------------------
 
 
@@ -1076,9 +1082,9 @@
 ;;; The program terminates once all elements of S have been processed
 
 ;;; testing data
-;;; n=112500000 (5 2 8), m=26244 (2 8) => #t
-;;;     360    (3 2 1), m=8 (3) => #t
-;;; 126000 (4 2 3 1) m=1350000 (4 3 5)  => #f
+;;; m=26244 (2 8), n=112500000 (5 2 8) => #t
+;;; m=8 (3), n=360 (3 2 1)) => #t
+;;; m=1350000 (4 3 5), n=126000 (4 2 3 1)   => #f
 ;;; --------------------------------------------------------------------------------------------------------------
 
 
